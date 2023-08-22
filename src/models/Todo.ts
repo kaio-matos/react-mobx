@@ -1,12 +1,12 @@
 import { makeAutoObservable } from "mobx";
-import { Currency } from "./Currency";
+import { Amount } from "./Amount";
 
 export class Todo {
   id: number;
   title: string;
-  price: Currency;
+  price: Amount;
 
-  constructor(id: number, title: string, price: Currency) {
+  constructor(id: number, title: string, price: Amount) {
     this.id = id;
     this.title = title;
     this.price = price;

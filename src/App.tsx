@@ -1,7 +1,20 @@
 import TodoDetails from "./components/TodoDetails";
+import currencies from "./assets/currencies.json";
 import { motion } from "framer-motion";
+import { useStore } from "./stores";
+import { Currency } from "./models/Currency";
+
+function useBootstrap() {
+  const { currencyStore } = useStore();
+
+  currencies.forEach((currency) =>
+    currencyStore.addCurrency(new Currency(currency))
+  );
+}
 
 function App() {
+  useBootstrap();
+
   return (
     <div className="h-screen w-screen bg-slate-800 text-white p-5">
       <div className="container mx-auto text-center overflow-hidden">

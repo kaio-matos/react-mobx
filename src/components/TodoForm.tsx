@@ -6,21 +6,25 @@ import { useStore } from "../stores";
 import { Todo } from "../models/Todo";
 
 import currencies from "../assets/currencies.json";
-import { Currency } from "../models/Currency";
+import { Amount } from "../models/Amount";
 
 const TodoForm = () => {
-  const { todoStore } = useStore();
+  const { todoStore, currencyStore } = useStore();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = action((e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     const title = formData.get("title")?.toString() || "";
-    const currency = formData.get("currency")?.toString() || "";
-    if (!title || !currency) return;
+    const currency_code = formData.get("currency")?.toString() || "";
+    const price = formData.get("price")?.toString() || "";
+
+    if (!title || !currency_code || !currency_code) return;
+
+    const currency = currencyStore.findCurrency(currency_code);
 
     todoStore.createTodo(
-      new Todo(Date.now(), title, new Currency(currency, Math.random() * 100))
+      new Todo(Date.now(), title, new Amount(currency, Number(price)))
     );
 
     if (inputRef.current?.value) {
@@ -39,6 +43,12 @@ const TodoForm = () => {
           ref={inputRef}
           name="title"
           placeholder="Title"
+          className="p-3 outline-none focus:ring focus:ring-blue-500"
+        />
+
+        <input
+          name="price"
+          placeholder="Price"
           className="p-3 outline-none focus:ring focus:ring-blue-500"
         />
 
