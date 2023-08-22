@@ -1,19 +1,34 @@
 import { makeAutoObservable } from "mobx";
 
 export class Currency {
-  currency: string;
-  value: number;
+  code: string;
+  symbol: string;
+  name: string;
+  symbol_native: string;
+  decimal_digits: number;
+  rounding: number;
+  name_plural: string;
+  market_price: number;
 
-  constructor(currency: string, value: number) {
-    this.currency = currency;
-    this.value = value;
+  constructor(data: {
+    code: string;
+    symbol: string;
+    name: string;
+    symbol_native: string;
+    decimal_digits: number;
+    rounding: number;
+    name_plural: string;
+    market_price: number;
+  }) {
+    this.code = data.code;
+    this.symbol = data.symbol;
+    this.name = data.name;
+    this.symbol_native = data.symbol_native;
+    this.decimal_digits = data.decimal_digits;
+    this.rounding = data.rounding;
+    this.name_plural = data.name_plural;
+    this.market_price = data.market_price;
+
     makeAutoObservable(this);
-  }
-
-  get formatted() {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: this.currency,
-    }).format(this.value);
   }
 }
