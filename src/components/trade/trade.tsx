@@ -2,15 +2,15 @@ import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { Currency } from "../../models/Currency";
 import { useStore } from "../../stores";
-import { useFetch } from "../../hooks/fetch";
+import { useFetch, useMountFetch } from "../../hooks/fetch";
 import { CryptoService } from "../../services";
 import { Coin } from "../../services/crypto/coins/types";
 import { Amount } from "../../models/Amount";
 
 enum Modes {
-  picking,
-  buy,
-  sell,
+  picking = "picking",
+  buy = "buy",
+  sell = "sell",
 }
 
 interface CurrencyPair {
@@ -164,32 +164,125 @@ export const TradeForm = observer(function TradeForm() {
   const [currencyPair, setCurrencyPair] = useState<CurrencyPair>();
   const [amount, setAmount] = useState<Amount>();
 
+  const {
+    state: orders,
+    isLoading: isLoadingOrders,
+    execute: getOrders,
+  } = useMountFetch(CryptoService.Orders.index.bind(CryptoService.Orders), []);
+
+  const { state: order, execute: createOrder } = useFetch(
+    CryptoService.Orders.create.bind(CryptoService.Orders),
+    null
+  );
+
   useEffect(() => {
     if (currencyPair?.base_currency && currencyPair?.quote_currency) {
       setAmount(new Amount(currencyPair.base_currency, 0));
     }
   }, [currencyPair]);
 
+  useEffect(() => {
+    getOrders();
+  }, [order]);
+
+  const buy = async () => {
+    if (!currencyPair?.base_currency || !currencyPair?.quote_currency) return;
+    if (!amount) return;
+    if (mode !== Modes.buy) return;
+
+    await createOrder({
+      base_currency: currencyPair.base_currency,
+      quote_currency: currencyPair.quote_currency,
+      amount: amount.value,
+      side: mode,
+    });
+  };
+
+  const sell = async () => {
+    if (!currencyPair?.base_currency || !currencyPair?.quote_currency) return;
+    if (!amount) return;
+    if (mode !== Modes.sell) return;
+
+    await createOrder({
+      base_currency: currencyPair.base_currency,
+      quote_currency: currencyPair.quote_currency,
+      amount: amount.value,
+      side: mode,
+    });
+  };
+
   return (
     <div>
-      <PickCurrencyPair
-        onSelect={(pair) => {
-          setMode(Modes.buy);
-          setCurrencyPair(pair);
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (mode === Modes.buy) {
+            buy();
+          } else if (mode === Modes.sell) {
+            sell();
+          }
         }}
-      />
+      >
+        <PickCurrencyPair
+          onSelect={(pair) => {
+            setMode(Modes.buy);
+            setCurrencyPair(pair);
+          }}
+        />
 
-      {amount && (
-        <div className="mt-5">
-          <p>Amount: </p>
-          <TradeAmountInput
-            amount={amount}
-            onChange={(v) => {
-              amount.value = v;
-            }}
-          />
-        </div>
-      )}
+        {amount && (
+          <div className="flex flex-col mt-5">
+            <p>Amount: </p>
+            <TradeAmountInput
+              amount={amount}
+              onChange={(v) => {
+                amount.value = v;
+              }}
+            />
+
+            <div className="flex gap-4">
+              <button
+                className="px-4 py-2 mt-4 self-start bg-blue-400 rounded"
+                type="submit"
+                onClick={() => setMode(Modes.buy)}
+              >
+                Buy
+              </button>
+              <button
+                className="px-4 py-2 mt-4 self-start bg-blue-400 rounded"
+                type="submit"
+                onClick={() => setMode(Modes.sell)}
+              >
+                Sell
+              </button>
+            </div>
+          </div>
+        )}
+      </form>
+
+      <section className="grid grid-cols-3 gap-4 mt-8">
+        {isLoadingOrders ? (
+          <b>Loading orders...</b>
+        ) : (
+          orders.map((order) => (
+            <article className="bg-slate-500 rounded p-6" key={order.id}>
+              <h2 className="text-2xl">{order.amount.formatted}</h2>
+
+              {order.side === "buy" ? (
+                <>
+                  <p>Bought: {order.base_currency.name}</p>
+                  <p>Selled: {order.quote_currency.name}</p>
+                </>
+              ) : (
+                <>
+                  <p>Bought: {order.quote_currency.name}</p>
+                  <p>Selled: {order.base_currency.name}</p>
+                </>
+              )}
+            </article>
+          ))
+        )}
+      </section>
     </div>
   );
 });
