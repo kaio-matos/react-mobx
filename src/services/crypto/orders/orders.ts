@@ -1,4 +1,3 @@
-import { Amount } from "../../../models/Amount";
 import { Order } from "../../../models/Order";
 import { Http } from "../http";
 import { OrderResource } from "./types";

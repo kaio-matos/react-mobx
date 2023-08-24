@@ -38,7 +38,9 @@ export class Amount {
       // fallback
       return {
         format: (n: number) =>
-          `${this._currency.name} ${n.toFixed(this._currency.decimal_digits)}`,
+          `${this._currency.name} ${n.toPrecision(
+            this._currency.decimal_digits
+          )}`,
       };
     }
   }
