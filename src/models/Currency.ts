@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
 
 export class Currency {
+  id: string;
   code: string;
   symbol: string;
   name: string;
@@ -8,7 +9,6 @@ export class Currency {
   decimal_digits: number;
   rounding: number;
   name_plural: string;
-  market_price: number;
 
   constructor(data: {
     code: string;
@@ -18,8 +18,9 @@ export class Currency {
     decimal_digits: number;
     rounding: number;
     name_plural: string;
-    market_price: number;
+    id: string;
   }) {
+    this.id = data.id;
     this.code = data.code;
     this.symbol = data.symbol;
     this.name = data.name;
@@ -27,7 +28,6 @@ export class Currency {
     this.decimal_digits = data.decimal_digits;
     this.rounding = data.rounding;
     this.name_plural = data.name_plural;
-    this.market_price = data.market_price;
 
     makeAutoObservable(this);
   }

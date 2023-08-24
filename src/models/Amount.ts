@@ -12,10 +12,17 @@ export class Amount {
   }
 
   private get formatter() {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: this.currency.code,
-    });
+    try {
+      return new Intl.NumberFormat(undefined, {
+        style: "currency",
+        currency: this.currency.code,
+      });
+    } catch {
+      // fallback
+      return {
+        format: (n: number) => `${this.currency.name} ${n}`,
+      };
+    }
   }
 
   get formatted() {

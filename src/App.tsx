@@ -1,40 +1,33 @@
-import TodoDetails from "./components/TodoDetails";
 import currencies from "./assets/currencies.json";
-import { motion } from "framer-motion";
 import { useStore } from "./stores";
 import { Currency } from "./models/Currency";
+import { CryptoService } from "./services";
+import { useMountFetch } from "./hooks/fetch";
+import { TradeForm } from "./components/trade/trade";
 
 function useBootstrap() {
-  const { currencyStore } = useStore();
+  const { coinsStore } = useStore();
 
-  currencies.forEach((currency) =>
-    currencyStore.addCurrency(new Currency(currency))
-  );
+  const data = useMountFetch(async () => {
+    if (coinsStore.coins.length) {
+      return Promise.resolve(coinsStore.coins);
+    }
+    const coins = await CryptoService.Coins.index();
+
+    coinsStore.setCoins(coins);
+
+    return coins;
+  }, []);
+
+  return data;
 }
 
 function App() {
-  useBootstrap();
+  const { isLoading } = useBootstrap();
 
   return (
     <div className="h-screen w-screen bg-slate-800 text-white p-5">
-      <div className="container mx-auto text-center overflow-hidden">
-        <motion.h1
-          initial={{ y: -200 }}
-          animate={{ y: 0 }}
-          transition={{ type: "spring", duration: 0.5 }}
-          whileHover={{ scale: 1.1 }}
-          className="text-3xl mb-5"
-        >
-          Todo App
-        </motion.h1>
-        <motion.div
-          initial={{ y: 1000 }}
-          animate={{ y: 0 }}
-          transition={{ type: "spring", duration: 1 }}
-        >
-          <TodoDetails />
-        </motion.div>
-      </div>
+      {isLoading ? "Loading..." : <TradeForm />}
     </div>
   );
 }
