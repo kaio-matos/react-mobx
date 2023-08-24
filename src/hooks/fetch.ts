@@ -12,6 +12,8 @@ export function useMountFetch<T>(cb: () => Promise<T>, initial: T) {
     try {
       const data = await cb();
       setState(data);
+      setIsLoading(false);
+      return data;
     } catch (err) {
       setError(err);
     }
@@ -49,13 +51,17 @@ export function useFetch<T extends Fn, C>(cb: T, initial: C) {
   const [error, setError] = useState<unknown>(null);
 
   async function execute(...args: Parameters<T>): Promise<State | undefined> {
+    setIsLoading(true);
     try {
       const data = await cb(...args);
       setState(data);
+      setIsLoading(false);
       return data;
     } catch (err) {
+      console.log(err);
       setError(err);
     }
+    setIsLoading(false);
   }
 
   return {
