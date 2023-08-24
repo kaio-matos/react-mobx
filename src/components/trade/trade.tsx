@@ -10,6 +10,7 @@ import { Amount } from "../../models/Amount";
 enum Modes {
   picking,
   buy,
+  sell,
 }
 
 interface CurrencyPair {
@@ -73,7 +74,7 @@ const PickCurrencyPair = observer(function PickCurrencyPair(props: {
       <div>
         <p>Buying:</p>
         <select
-          className="text-black"
+          className="text-black w-44"
           onChange={(ev) => setBaseCurrencyId(ev.target.value)}
         >
           <option />
@@ -89,7 +90,7 @@ const PickCurrencyPair = observer(function PickCurrencyPair(props: {
       <div>
         <p>Selling:</p>
         <select
-          className="text-black"
+          className="text-black w-44"
           onChange={(ev) => setQuoteCurrencyId(ev.target.value)}
         >
           <option />
@@ -111,16 +112,39 @@ export const TradeAmountInput = observer(function TradeAmountInput(props: {
   amount: Amount;
   onChange: (v: number) => void;
 }) {
-  const [value, setValue] = useState(String(props.amount.value));
+  const toFixed = (n: number) =>
+    Number(n.toFixed(props.amount.currency.decimal_digits));
+
+  const [value, setValue] = useState(String(toFixed(props.amount.value)));
   const [isFocused, setFocus] = useState(false);
 
   useEffect(() => {
-    props.onChange(Number(value));
+    props.onChange(toFixed(Number(value)));
   }, [value]);
 
   useEffect(() => {
+    if (Number(value) === props.amount.value) return;
+
     setValue(String(props.amount.value));
   }, [props.amount.value]);
+
+  function updateAmount(value: string) {
+    value = value.replace(",", ".");
+
+    const isValidAmount = (v: string) => {
+      const n = Number(v);
+
+      if (isNaN(n)) return false;
+      const decimal_digits = v.split(".")[1]?.length ?? 0;
+
+      if (decimal_digits > props.amount.currency.decimal_digits) return false;
+
+      return true;
+    };
+
+    if (!isValidAmount(value)) return;
+    setValue(value);
+  }
 
   return (
     <input
@@ -129,12 +153,7 @@ export const TradeAmountInput = observer(function TradeAmountInput(props: {
       onBlur={() => setFocus(false)}
       value={isFocused ? value : props.amount.formatted}
       className="text-black"
-      onChange={(e) => {
-        let value = e.target.value;
-        value = value.replace(",", ".");
-
-        setValue(value);
-      }}
+      onChange={(e) => updateAmount(e.target.value)}
     />
   );
 });
@@ -143,11 +162,10 @@ export const TradeForm = observer(function TradeForm() {
   const [mode, setMode] = useState(Modes.picking);
 
   const [currencyPair, setCurrencyPair] = useState<CurrencyPair>();
-
   const [amount, setAmount] = useState<Amount>();
 
   useEffect(() => {
-    if (currencyPair?.quote_currency) {
+    if (currencyPair?.base_currency && currencyPair?.quote_currency) {
       setAmount(new Amount(currencyPair.base_currency, 0));
     }
   }, [currencyPair]);
@@ -161,13 +179,13 @@ export const TradeForm = observer(function TradeForm() {
         }}
       />
 
-      {currencyPair && amount && (
+      {amount && (
         <div className="mt-5">
           <p>Amount: </p>
           <TradeAmountInput
             amount={amount}
             onChange={(v) => {
-              setAmount(new Amount(amount.currency, v));
+              amount.value = v;
             }}
           />
         </div>
