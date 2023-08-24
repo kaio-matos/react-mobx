@@ -1,10 +1,10 @@
 import { createContext, useContext } from "react";
-import { Todos } from "./todo";
 import { Currencies } from "./currency";
+import { Coins } from "./coins";
 
 const store = {
-  todoStore: new Todos(),
   currencyStore: new Currencies(),
+  coinsStore: new Coins(),
 };
 
 export const StoreContext = createContext(store);
