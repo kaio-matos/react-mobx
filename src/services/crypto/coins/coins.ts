@@ -2,17 +2,19 @@ import { Amount } from "../../../models/Amount";
 import { CoinPrice } from "../../../models/CoinPrice";
 import { Currency } from "../../../models/Currency";
 import { Http } from "../http";
-import { Coin, CoinPriceResource, CoinSimple } from "./types";
+import { CoinResource, CoinSimpleResource } from "./types";
 
 export class Coins extends Http {
   async index() {
-    const { data: coins } = await this.http.get<CoinSimple[]>("coins/list");
+    const { data: coins } = await this.http.get<CoinSimpleResource[]>(
+      "coins/list"
+    );
 
     return coins;
   }
 
   async get(id: string) {
-    const { data: coin } = await this.http.get<Coin>(`coins/${id}`, {
+    const { data: coin } = await this.http.get<CoinResource>(`coins/${id}`, {
       params: {
         tickers: false,
         market_data: false,

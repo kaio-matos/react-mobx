@@ -1,10 +1,10 @@
-export interface CoinSimple {
+export interface CoinSimpleResource {
   id: string;
   symbol: string;
   name: string;
 }
 
-export interface Coin {
+export interface CoinResource {
   id: string;
   symbol: string;
   name: string;
