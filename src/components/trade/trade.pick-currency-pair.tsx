@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useFetch } from "../../hooks/fetch";
 import { Currency } from "../../models/Currency";
 import { CryptoService } from "../../services";
-import { CoinResource } from "../../services/crypto/coins/types";
 import { useStore } from "../../stores";
 import { CurrencyPair } from "./types";
 
@@ -21,23 +20,11 @@ export const PickCurrencyPair = observer(function PickCurrencyPair(props: {
     null
   );
 
-  const createCurrencyFromCoin = (coin: CoinResource) =>
-    new Currency({
-      code: coin.id,
-      decimal_digits: 8,
-      name: coin.name,
-      name_plural: coin.name,
-      rounding: 0,
-      symbol: coin.symbol,
-      symbol_native: coin.symbol,
-      id: coin.id,
-    });
-
   const setBaseCurrencyId = async (id: string) => {
     const coin = await getCoinDataById(id);
 
     if (coin) {
-      setBaseCurrency(createCurrencyFromCoin(coin));
+      setBaseCurrency(coin);
     }
   };
 
@@ -45,7 +32,7 @@ export const PickCurrencyPair = observer(function PickCurrencyPair(props: {
     const coin = await getCoinDataById(id);
 
     if (coin) {
-      setQuoteCurrency(createCurrencyFromCoin(coin));
+      setQuoteCurrency(coin);
     }
   };
 

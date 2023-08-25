@@ -64,50 +64,55 @@ export const TradeForm = observer(function TradeForm(props: {
     });
   };
 
+  const trade = async () => {
+    switch (mode) {
+      case Modes.buy:
+        buy();
+        return;
+      case Modes.sell:
+        sell();
+        return;
+    }
+  };
+
   return (
-    <div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (mode === Modes.buy) {
-            buy();
-          } else if (mode === Modes.sell) {
-            sell();
-          }
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        trade();
+      }}
+    >
+      <PickCurrencyPair
+        onSelect={(pair) => {
+          setMode(Modes.buy);
+          setCurrencyPair(pair);
         }}
-      >
-        <PickCurrencyPair
-          onSelect={(pair) => {
-            setMode(Modes.buy);
-            setCurrencyPair(pair);
-          }}
-        />
+      />
 
-        <TradeModePicker mode={mode} onSelect={setMode} />
+      <TradeModePicker mode={mode} onSelect={setMode} />
 
-        {amount && (
-          <div className="flex flex-col mt-5 gap-4">
-            <TradeInputAmount
-              label="Amount:"
-              amount={amount}
-              onChange={(v) => {
-                amount.value = v;
-              }}
-            />
+      {amount && (
+        <div className="flex flex-col mt-5 gap-4">
+          <TradeInputAmount
+            label="Amount:"
+            amount={amount}
+            onChange={(v) => {
+              amount.value = v;
+            }}
+          />
 
-            <div className=" bg-slate-700 p-4 rounded">
-              {price && <TradePreview price={price} amount={amount} />}
-            </div>
-
-            <button
-              className="px-4 py-2 self-start mt-4 bg-blue-400 rounded"
-              type="submit"
-            >
-              Confirm
-            </button>
+          <div className=" bg-slate-700 p-4 rounded">
+            {price && <TradePreview price={price} amount={amount} />}
           </div>
-        )}
-      </form>
-    </div>
+
+          <button
+            className="px-4 py-2 self-start mt-4 bg-blue-400 rounded"
+            type="submit"
+          >
+            Confirm
+          </button>
+        </div>
+      )}
+    </form>
   );
 });

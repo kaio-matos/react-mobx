@@ -24,7 +24,16 @@ export class Coins extends Http {
       },
     });
 
-    return coin;
+    return new Currency({
+      code: coin.id,
+      decimal_digits: 8,
+      name: coin.name,
+      name_plural: coin.name,
+      rounding: 0,
+      symbol: coin.symbol,
+      symbol_native: coin.symbol,
+      id: coin.id,
+    });
   }
 
   async getPrice(base_currency: Currency, quote_currency: Currency) {

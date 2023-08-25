@@ -17,11 +17,7 @@ export class Orders extends Http {
     return Promise.resolve(new Order(found));
   }
 
-  async create(
-    order: Omit<OrderResource, "created_at" | "id" | "price"> & {
-      price: number;
-    }
-  ) {
+  async create(order: Omit<OrderResource, "created_at" | "id">) {
     const created: OrderResource = {
       ...order,
       id: crypto.randomUUID(),

@@ -1,6 +1,4 @@
-import currencies from "./assets/currencies.json";
 import { useStore } from "./stores";
-import { Currency } from "./models/Currency";
 import { CryptoService } from "./services";
 import { useMountFetch } from "./hooks/fetch";
 import { TradeForm } from "./components/trade/trade";
