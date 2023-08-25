@@ -81,7 +81,7 @@ export interface PublicInterestStats {
   bing_matches: null;
 }
 
-export interface CoinPrice {
+export interface CoinPriceResource {
   id: string;
   symbol: string;
   name: string;

@@ -26,7 +26,7 @@ function App() {
   const { isLoading } = useBootstrap();
 
   return (
-    <div className="h-screen w-screen bg-slate-800 text-white p-5">
+    <div className="h-screen w-screen overflow-auto bg-slate-800 text-white p-5">
       {isLoading ? "Loading..." : <TradeForm />}
     </div>
   );

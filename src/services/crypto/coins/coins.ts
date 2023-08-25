@@ -1,5 +1,8 @@
+import { Amount } from "../../../models/Amount";
+import { CoinPrice } from "../../../models/CoinPrice";
+import { Currency } from "../../../models/Currency";
 import { Http } from "../http";
-import { Coin, CoinPrice, CoinSimple } from "./types";
+import { Coin, CoinPriceResource, CoinSimple } from "./types";
 
 export class Coins extends Http {
   async index() {
@@ -22,14 +25,21 @@ export class Coins extends Http {
     return coin;
   }
 
-  async getPrice(coin_id: string, currency_code: string) {
-    const { data: prices } = await this.http.get<CoinPrice[]>("coins/markets", {
-      params: {
-        ids: coin_id,
-        vs_currency: currency_code,
-      },
-    });
+  async getPrice(base_currency: Currency, quote_currency: Currency) {
+    // const { data: prices } = await this.http.get<CoinPriceResource[]>(
+    //   "coins/markets",
+    //   {
+    //     params: {
+    //       ids: base_currency.id,
+    //       vs_currency: quote_currency.id,
+    //     },
+    //   }
+    // );
 
-    return prices[0];
+    return new CoinPrice({
+      id: crypto.randomUUID(),
+      current_price: new Amount(quote_currency, Math.random() * 100),
+      last_updated: new Date().toUTCString(),
+    });
   }
 }

@@ -4,7 +4,7 @@ import { Amount } from "./Amount";
 
 export class Order {
   readonly id: string;
-  readonly price: number;
+  readonly price: Amount;
   readonly base_currency: Currency;
   readonly quote_currency: Currency;
   readonly side: "buy" | "sell";
@@ -21,14 +21,15 @@ export class Order {
     created_at: string;
   }) {
     this.id = data.id;
-    this.price = data.price;
     this.base_currency = data.base_currency;
     this.quote_currency = data.quote_currency;
     this.side = data.side;
     if (data.side === "buy") {
       this.amount = new Amount(data.base_currency, data.amount);
+      this.price = new Amount(data.quote_currency, data.price);
     } else {
       this.amount = new Amount(data.quote_currency, data.amount);
+      this.price = new Amount(data.base_currency, data.price);
     }
     this.created_at = data.created_at;
 

@@ -17,12 +17,15 @@ export class Orders extends Http {
     return Promise.resolve(new Order(found));
   }
 
-  async create(order: Omit<OrderResource, "created_at" | "id" | "price">) {
+  async create(
+    order: Omit<OrderResource, "created_at" | "id" | "price"> & {
+      price: number;
+    }
+  ) {
     const created: OrderResource = {
       ...order,
       id: crypto.randomUUID(),
       created_at: new Date().toUTCString(),
-      price: Math.random() * 50,
     };
     this.orders.push(created);
 
