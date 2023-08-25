@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { Amount } from "../../models/Amount";
 import { Order } from "../../models/Order";
-import { useOrder, usePrices } from "./hooks";
+import { useOrder, usePrices, useTrade } from "./hooks";
 import { TradeModePicker } from "./trade.mode-picker";
 import { TradePreview } from "./trade.preview";
 import { CurrencyPair, Modes } from "./types";
@@ -14,80 +14,26 @@ export const TradeForm = observer(function TradeForm(props: {
 }) {
   const [mode, setMode] = useState(Modes.picking);
   const [currencyPair, setCurrencyPair] = useState<CurrencyPair>();
-  const [amount, setAmount] = useState<Amount>();
 
-  const { order, createOrder } = useOrder();
-  const { price, getPrice } = usePrices();
+  const { trade, order, amount, price } = useTrade(currencyPair, mode);
 
-  useEffect(() => {
-    if (currencyPair?.base_currency && currencyPair?.quote_currency) {
-      setAmount(new Amount(currencyPair.base_currency, 0));
-      if (mode === Modes.buy) {
-        getPrice(currencyPair.base_currency, currencyPair.quote_currency);
-      } else if (mode === Modes.sell) {
-        getPrice(currencyPair.quote_currency, currencyPair.base_currency);
-      }
-    }
-  }, [currencyPair]);
+  function onCurrencyPairSelection(pair: CurrencyPair) {
+    setMode(Modes.buy);
+    setCurrencyPair(pair);
+  }
+
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    trade();
+  }
 
   useEffect(() => {
     if (order) props.onTrade?.(order);
   }, [order]);
 
-  const buy = async () => {
-    if (!currencyPair?.base_currency || !currencyPair?.quote_currency) return;
-    if (!amount) return;
-    if (!price) return;
-    if (mode !== Modes.buy) return;
-
-    await createOrder({
-      base_currency: currencyPair.base_currency,
-      quote_currency: currencyPair.quote_currency,
-      amount: amount.value,
-      price: price.current_price.value,
-      side: mode,
-    });
-  };
-
-  const sell = async () => {
-    if (!currencyPair?.base_currency || !currencyPair?.quote_currency) return;
-    if (!amount) return;
-    if (!price) return;
-    if (mode !== Modes.sell) return;
-
-    await createOrder({
-      base_currency: currencyPair.base_currency,
-      quote_currency: currencyPair.quote_currency,
-      price: price.current_price.value,
-      amount: amount.value,
-      side: mode,
-    });
-  };
-
-  const trade = async () => {
-    switch (mode) {
-      case Modes.buy:
-        buy();
-        return;
-      case Modes.sell:
-        sell();
-        return;
-    }
-  };
-
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        trade();
-      }}
-    >
-      <PickCurrencyPair
-        onSelect={(pair) => {
-          setMode(Modes.buy);
-          setCurrencyPair(pair);
-        }}
-      />
+    <form onSubmit={onSubmit}>
+      <PickCurrencyPair onSelect={onCurrencyPairSelection} />
 
       <TradeModePicker mode={mode} onSelect={setMode} />
 
