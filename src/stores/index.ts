@@ -1,9 +1,7 @@
 import { createContext, useContext } from "react";
-import { Currencies } from "./currency";
 import { Coins } from "./coins";
 
 const store = {
-  currencyStore: new Currencies(),
   coinsStore: new Coins(),
 };
 

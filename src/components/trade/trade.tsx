@@ -1,8 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { Amount } from "../../models/Amount";
 import { Order } from "../../models/Order";
-import { useOrder, usePrices, useTrade } from "./hooks";
+import { useTrade } from "./hooks";
 import { TradeModePicker } from "./trade.mode-picker";
 import { TradePreview } from "./trade.preview";
 import { CurrencyPair, Modes } from "./types";
