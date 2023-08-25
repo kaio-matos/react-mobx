@@ -5,30 +5,31 @@ import { CurrencyPair, Modes } from "./types";
 import { Amount } from "../../models/Amount";
 
 export const useOrder = () => {
-  const { state: order, execute: createOrder } = useFetch(
-    CryptoService.Orders.create.bind(CryptoService.Orders),
-    null
-  );
+  const {
+    state: order,
+    execute: createOrder,
+    isLoading: isCreatingOrder,
+    setState: setOrder,
+  } = useFetch(CryptoService.Orders.create.bind(CryptoService.Orders), null);
 
-  return { order, createOrder };
+  return { order, createOrder, isCreatingOrder, setOrder };
 };
 
 export const usePrices = () => {
-  const { state: price, execute: getPrice } = useFetch(
-    CryptoService.Coins.getPrice.bind(CryptoService.Coins),
-    null
-  );
-  return { price, getPrice };
+  const {
+    state: price,
+    execute: getPrice,
+    isLoading: isGettingPrice,
+    setState: setPrice,
+  } = useFetch(CryptoService.Coins.getPrice.bind(CryptoService.Coins), null);
+  return { price, getPrice, isGettingPrice, setPrice };
 };
 
-export const useTrade = (
-  currencyPair: CurrencyPair | undefined,
-  mode: Modes
-) => {
+export const useTrade = (currencyPair: CurrencyPair | null, mode: Modes) => {
   const [amount, setAmount] = useState<Amount>();
 
-  const { order, createOrder } = useOrder();
-  const { price, getPrice } = usePrices();
+  const { order, createOrder, isCreatingOrder, setOrder } = useOrder();
+  const { price, getPrice, isGettingPrice, setPrice } = usePrices();
 
   useEffect(() => {
     if (!currencyPair?.base_currency || !currencyPair?.quote_currency) return;
@@ -86,10 +87,21 @@ export const useTrade = (
     }
   };
 
+  const reset = () => {
+    setAmount(undefined);
+    setOrder(null);
+    setPrice(null);
+  };
+
   return {
     trade,
     order,
+    reset,
     price,
     amount,
+    loading: {
+      price: isGettingPrice,
+      order: isCreatingOrder,
+    },
   };
 };

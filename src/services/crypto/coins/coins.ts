@@ -1,6 +1,7 @@
 import { Amount } from "../../../models/Amount";
 import { CoinPrice } from "../../../models/CoinPrice";
 import { Currency } from "../../../models/Currency";
+import { sleep } from "../../../utils/sleep";
 import { Http } from "../http";
 import { CoinResource, CoinSimpleResource } from "./types";
 
@@ -46,6 +47,7 @@ export class Coins extends Http {
     //     },
     //   }
     // );
+    await sleep(1000);
 
     return new CoinPrice({
       id: crypto.randomUUID(),

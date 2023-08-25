@@ -7,21 +7,27 @@ import { useStore } from "../../stores";
 import { CurrencyPair } from "./types";
 
 export const PickCurrencyPair = observer(function PickCurrencyPair(props: {
+  currencyPair: CurrencyPair | null;
   onSelect: (pair: CurrencyPair) => void;
+  isSelecting: () => void;
 }) {
-  const [baseCurrency, setBaseCurrency] = useState<Currency>();
-  const [quoteCurrency, setQuoteCurrency] = useState<Currency>();
+  const [baseCurrency, setBaseCurrency] = useState<Currency | undefined>(
+    props?.currencyPair?.base_currency
+  );
+  const [quoteCurrency, setQuoteCurrency] = useState<Currency | undefined>(
+    props?.currencyPair?.quote_currency
+  );
 
   const { coinsStore } = useStore();
   const half = coinsStore.coins.slice(0, 20); // todo: lazy select
 
-  const { execute: getCoinDataById, isLoading } = useFetch(
+  const { execute: getCurrency, isLoading: isGettingCurrency } = useFetch(
     CryptoService.Coins.get.bind(CryptoService.Coins),
     null
   );
 
   const setBaseCurrencyId = async (id: string) => {
-    const coin = await getCoinDataById(id);
+    const coin = await getCurrency(id);
 
     if (coin) {
       setBaseCurrency(coin);
@@ -29,12 +35,16 @@ export const PickCurrencyPair = observer(function PickCurrencyPair(props: {
   };
 
   const setQuoteCurrencyId = async (id: string) => {
-    const coin = await getCoinDataById(id);
+    const coin = await getCurrency(id);
 
     if (coin) {
       setQuoteCurrency(coin);
     }
   };
+
+  useEffect(() => {
+    props.isSelecting();
+  }, [isGettingCurrency]);
 
   useEffect(() => {
     if (baseCurrency && quoteCurrency) {
@@ -45,6 +55,11 @@ export const PickCurrencyPair = observer(function PickCurrencyPair(props: {
     }
   }, [baseCurrency, quoteCurrency]);
 
+  useEffect(() => {
+    setBaseCurrency(props.currencyPair?.base_currency);
+    setQuoteCurrency(props.currencyPair?.quote_currency);
+  }, [props.currencyPair]);
+
   return (
     <section>
       <div>
@@ -52,8 +67,9 @@ export const PickCurrencyPair = observer(function PickCurrencyPair(props: {
         <select
           className="text-black w-44"
           onChange={(ev) => setBaseCurrencyId(ev.target.value)}
+          value={baseCurrency?.id ?? ""}
         >
-          <option />
+          <option value="" />
 
           {half.map((coin) => (
             <option key={coin.id} value={coin.id}>
@@ -68,8 +84,9 @@ export const PickCurrencyPair = observer(function PickCurrencyPair(props: {
         <select
           className="text-black w-44"
           onChange={(ev) => setQuoteCurrencyId(ev.target.value)}
+          value={quoteCurrency?.id ?? ""}
         >
-          <option />
+          <option value="" />
 
           {half.map((coin) => (
             <option key={coin.id} value={coin.id}>
@@ -79,7 +96,7 @@ export const PickCurrencyPair = observer(function PickCurrencyPair(props: {
         </select>
       </div>
 
-      {isLoading && <b>Loading...</b>}
+      {isGettingCurrency && <b>Loading...</b>}
     </section>
   );
 });

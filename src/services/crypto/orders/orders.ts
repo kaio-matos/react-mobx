@@ -1,4 +1,5 @@
 import { Order } from "../../../models/Order";
+import { sleep } from "../../../utils/sleep";
 import { Http } from "../http";
 import { OrderResource } from "./types";
 
@@ -24,6 +25,8 @@ export class Orders extends Http {
       created_at: new Date().toUTCString(),
     };
     this.orders.push(created);
+
+    await sleep(1000);
 
     return Promise.resolve(new Order(created));
   }
