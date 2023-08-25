@@ -1,25 +1,25 @@
 import { autorun, makeAutoObservable } from "mobx";
-import { CoinSimple } from "../../services/crypto/coins/types";
+import { CoinSimpleResource } from "../../services/crypto/coins/types";
 
 export class Coins {
-  coins: CoinSimple[] = [];
+  coins: CoinSimpleResource[] = [];
 
   constructor() {
     makeAutoObservable(this);
 
     const coins = localStorage.getItem("stores.coins");
-    this.setCoins(coins ? (JSON.parse(coins) as CoinSimple[]) : []);
+    this.setCoins(coins ? (JSON.parse(coins) as CoinSimpleResource[]) : []);
 
     autorun(() => {
       localStorage.setItem("stores.coins", JSON.stringify(this.coins));
     });
   }
 
-  setCoins(coins: CoinSimple[]) {
+  setCoins(coins: CoinSimpleResource[]) {
     this.coins = coins;
   }
 
-  addCoin(coin: CoinSimple) {
+  addCoin(coin: CoinSimpleResource) {
     this.coins.push(coin);
     return coin;
   }
