@@ -27,13 +27,14 @@ export class Coins extends Http {
 
     return new Currency({
       code: coin.id,
-      decimal_digits: 8,
+      decimal_digits: Math.round(Math.random() * 8),
       name: coin.name,
       name_plural: coin.name,
       rounding: 0,
       symbol: coin.symbol,
       symbol_native: coin.symbol,
       id: coin.id,
+      min_order_amount: Math.random() * 5,
     });
   }
 

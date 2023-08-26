@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { z } from "zod";
+import { TReturnCreateError, createError } from "../utils/error";
 
 export function useMountFetch<T>(cb: () => Promise<T>, initial: T) {
   const [isLoading, setIsLoading] = useState(false);
@@ -43,23 +45,29 @@ export function useMountFetch<T>(cb: () => Promise<T>, initial: T) {
 
 type Fn = (...args: any[]) => any;
 
-export function useFetch<T extends Fn, C>(cb: T, initial: C) {
+export function useFetch<T extends Fn, C, Schema extends z.AnyZodObject>(
+  cb: T,
+  initial: C,
+  schema?: Schema
+) {
   type State = Awaited<ReturnType<T>>;
 
   const [isLoading, setIsLoading] = useState(false);
   const [state, setState] = useState<State | C>(initial);
-  const [error, setError] = useState<unknown>(null);
+  const [error, setError] = useState<TReturnCreateError<Schema>>(
+    createError<Schema>(null)
+  );
 
   async function execute(...args: Parameters<T>): Promise<State | undefined> {
     setIsLoading(true);
     try {
+      schema?.parse(args[0]);
       const data = await cb(...args);
       setState(data);
       setIsLoading(false);
       return data;
     } catch (err) {
-      console.log(err);
-      setError(err);
+      setError(createError<Schema>(err));
     }
     setIsLoading(false);
   }

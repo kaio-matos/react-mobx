@@ -10,9 +10,14 @@ export const useOrder = () => {
     execute: createOrder,
     isLoading: isCreatingOrder,
     setState: setOrder,
-  } = useFetch(CryptoService.Orders.create.bind(CryptoService.Orders), null);
+    error: orderErrors,
+  } = useFetch(
+    CryptoService.Orders.create.bind(CryptoService.Orders),
+    null,
+    CryptoService.Orders.create_schema
+  );
 
-  return { order, createOrder, isCreatingOrder, setOrder };
+  return { order, createOrder, isCreatingOrder, setOrder, orderErrors };
 };
 
 export const usePrices = () => {
@@ -28,7 +33,8 @@ export const usePrices = () => {
 export const useTrade = (currencyPair: CurrencyPair | null, mode: Modes) => {
   const [amount, setAmount] = useState<Amount>();
 
-  const { order, createOrder, isCreatingOrder, setOrder } = useOrder();
+  const { order, createOrder, isCreatingOrder, setOrder, orderErrors } =
+    useOrder();
   const { price, getPrice, isGettingPrice, setPrice } = usePrices();
 
   useEffect(() => {
@@ -53,8 +59,8 @@ export const useTrade = (currencyPair: CurrencyPair | null, mode: Modes) => {
     if (mode !== Modes.buy) return;
 
     await createOrder({
-      base_currency: currencyPair.base_currency,
-      quote_currency: currencyPair.quote_currency,
+      base_currency: currencyPair.base_currency.object,
+      quote_currency: currencyPair.quote_currency.object,
       amount: amount.value,
       price: price.current_price.value,
       side: mode,
@@ -68,8 +74,8 @@ export const useTrade = (currencyPair: CurrencyPair | null, mode: Modes) => {
     if (mode !== Modes.sell) return;
 
     await createOrder({
-      base_currency: currencyPair.base_currency,
-      quote_currency: currencyPair.quote_currency,
+      base_currency: currencyPair.base_currency.object,
+      quote_currency: currencyPair.quote_currency.object,
       price: price.current_price.value,
       amount: amount.value,
       side: mode,
@@ -99,6 +105,9 @@ export const useTrade = (currencyPair: CurrencyPair | null, mode: Modes) => {
     reset,
     price,
     amount,
+    error: {
+      order: orderErrors,
+    },
     loading: {
       price: isGettingPrice,
       order: isCreatingOrder,

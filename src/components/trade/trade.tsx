@@ -8,13 +8,27 @@ import { CurrencyPair, Modes } from "./types";
 import { PickCurrencyPair } from "./trade.pick-currency-pair";
 import { TradeInputAmount } from "./trade.input-amount";
 
+export const TradeError = observer(function TradeError(props: {
+  errors?: string[];
+}) {
+  if (!props.errors) return <></>;
+
+  return (
+    <div className="text-red-400">
+      {props.errors.map((error, i) => (
+        <p key={i}>{error}</p>
+      ))}
+    </div>
+  );
+});
+
 export const TradeForm = observer(function TradeForm(props: {
   onTrade?: (order: Order) => void;
 }) {
   const [mode, setMode] = useState(Modes.picking);
   const [currencyPair, setCurrencyPair] = useState<CurrencyPair | null>(null);
 
-  const { trade, order, reset, amount, price, loading } = useTrade(
+  const { trade, order, reset, amount, price, loading, error } = useTrade(
     currencyPair,
     mode
   );
@@ -50,10 +64,13 @@ export const TradeForm = observer(function TradeForm(props: {
         onSelect={onCurrencyPairSelection}
         isSelecting={() => setMode(Modes.picking)}
       />
+      <TradeError errors={error.order.validation?.base_currency?._errors} />
+      <TradeError errors={error.order.validation?.quote_currency?._errors} />
 
       {mode !== Modes.picking && (
         <>
           <TradeModePicker mode={mode} onSelect={setMode} />
+          <TradeError errors={error.order.validation?.side?._errors} />
 
           {amount && (
             <div className="flex flex-col mt-5 gap-4">
@@ -64,6 +81,7 @@ export const TradeForm = observer(function TradeForm(props: {
                   amount.value = v;
                 }}
               />
+              <TradeError errors={error.order.validation?.amount?._errors} />
 
               <div className="bg-slate-700 p-4 rounded">
                 {loading.price || !price ? (
