@@ -29,7 +29,7 @@ export class Currency {
     this.symbol = data.symbol;
     this.name = data.name;
     this.symbol_native = data.symbol_native;
-    this.decimal_digits = data.decimal_digits;
+    this.decimal_digits = data.decimal_digits > 100 ? 100 : data.decimal_digits;
     this.rounding = data.rounding;
     this.name_plural = data.name_plural;
     this.min_order_amount = new Amount(this, data.min_order_amount);
