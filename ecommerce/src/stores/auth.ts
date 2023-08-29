@@ -2,7 +2,7 @@ import { makeAutoObservable } from "mobx";
 import { User } from "../services/commerce/auth/resources/user";
 
 export class Auth {
-  user?: User;
+  user: User | null = null;
 
   constructor() {
     makeAutoObservable(this);
