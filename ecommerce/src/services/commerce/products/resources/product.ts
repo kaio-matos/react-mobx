@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { action, makeAutoObservable } from "mobx";
 
 export interface IProductResource {
   id: number;
@@ -49,10 +49,25 @@ export class Product {
     this.isDeleted = data.isDeleted;
     this.deletedOn = data.deletedOn;
 
+    // simulate price update
+    setInterval(
+      action(() => {
+        this.price += Math.random();
+      }),
+      Math.random() * 10000
+    );
+
     makeAutoObservable(this);
   }
 
   static create(data: IProductResource) {
     return new Product(data);
+  }
+
+  get formattedPrice() {
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: "USD",
+    }).format(this.price);
   }
 }
