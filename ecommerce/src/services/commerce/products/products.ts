@@ -8,7 +8,7 @@ export class Products extends Http {
   async index() {
     const {
       data: { products, ...data },
-    } = await this.http.get<tProducts>(routes.products._);
+    } = await this.http.get<tProducts>(routes.products._());
 
     return {
       products: products.map(Product.create),
@@ -18,7 +18,7 @@ export class Products extends Http {
 
   async get(id: number) {
     const { data } = await this.http.get<IProductResource>(
-      `${routes.products._}/${id}`
+      routes.products._(id)
     );
 
     return Product.create(data);
@@ -27,7 +27,7 @@ export class Products extends Http {
   async search(query: string) {
     const {
       data: { products, ...data },
-    } = await this.http.get<tProducts>(routes.products._, {
+    } = await this.http.get<tProducts>(routes.products._(), {
       params: {
         search: query,
       },
@@ -72,7 +72,7 @@ export class Products extends Http {
   }
 
   async update(id: number, payload: typeof schemas.create._type) {
-    const { data } = await this.http.post<IProductResource>(
+    const { data } = await this.http.put<IProductResource>(
       routes.auth.products.update(id),
       payload
     );

@@ -3,14 +3,20 @@ export const routes = {
     _: "/auth",
     login: "/auth/login",
     products: {
-      add: "auth/products/add",
-      update: (id: number) => "auth/products/update/" + id,
-      delete: (id: number) => "auth/products/delete/" + id,
+      add: "/auth/products/add",
+      update: (id: number) => "/auth/products/update/" + id,
+      delete: (id: number) => "/auth/products/delete/" + id,
     },
   },
   products: {
-    _: "/products",
+    _: (id?: number) => (id ? "/products/" + id : "/products"),
     categories: "/products/categories",
     category: (category: string) => "/products/category/" + category,
+  },
+  carts: {
+    _: "/carts",
+    user: (id: number) => "/carts/user/" + id,
+    add: "/carts/add",
+    update: (id: number) => "/carts/update/" + id,
   },
 } as const;
