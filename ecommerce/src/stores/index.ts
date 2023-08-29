@@ -1,6 +1,9 @@
 import { createContext, useContext } from "react";
+import { Auth } from "./auth";
 
-const store = {};
+const store = {
+  Auth: new Auth(),
+};
 
 export const StoreContext = createContext(store);
 
