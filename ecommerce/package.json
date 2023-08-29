@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-router": "0.0.1-beta.171",
     "axios": "^1.4.0",
     "mobx": "^6.9.0",
     "mobx-react-lite": "^3.4.3",
