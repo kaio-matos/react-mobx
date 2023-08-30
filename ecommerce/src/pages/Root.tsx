@@ -2,9 +2,13 @@ import { Link, Outlet } from "@tanstack/react-router";
 import { observer } from "mobx-react-lite";
 
 import { useToggle } from "../hooks/toggle";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLogin } from "./hooks/login";
 import { useStore } from "../stores";
+import { Cart as CartC } from "../services/commerce/carts/resources/cart";
+import { useMountFetch } from "../hooks/fetch";
+import { CommerceService } from "../services";
+import { User } from "../services/commerce/auth/resources/user";
 
 export const Drawer = observer(function Drawer(props: {
   isOpen: boolean;
@@ -20,7 +24,7 @@ export const Drawer = observer(function Drawer(props: {
         onClick={props.toggle}
       />
       <div
-        className={`fixed bg-slate-800 transition top-0 right-0 h-screen w-48 p-4 ${
+        className={`fixed bg-slate-800 transition top-0 right-0 h-screen w-96 p-4 overflow-y-auto ${
           props.isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -30,8 +34,33 @@ export const Drawer = observer(function Drawer(props: {
   );
 });
 
-export const Cart = observer(function Cart() {
+export const CartItem = observer(function CartItem({
+  cartItem,
+}: {
+  cartItem: CartC["products"][number];
+}) {
+  return (
+    <article>
+      <h3 className="text-xl font-bold">{cartItem.title}</h3>
+      <p>Price: {cartItem.price}</p>
+    </article>
+  );
+});
+
+export const Cart = observer(function Cart({ user }: { user: User }) {
   const [isOpen, toggle] = useToggle();
+  const { Carts } = useStore();
+
+  const { state } = useMountFetch(() => CommerceService.Carts.get(user.id), {
+    carts: [],
+    limit: 0,
+    skip: 0,
+    total: 0,
+  });
+
+  useEffect(() => {
+    Carts.setCarts(state.carts);
+  }, [state]);
 
   return (
     <>
@@ -44,7 +73,20 @@ export const Cart = observer(function Cart() {
           Close
         </button>
 
-        <section className="flex flex-col"></section>
+        <section className="flex flex-col gap-4">
+          {Carts.carts.map((cart) => (
+            <div key={cart.id}>
+              <h1 className="text-bold">Cart: {cart.id}</h1>
+              <p>Total: {cart.total} </p>
+
+              <div className="flex flex-col gap-2 pl-4">
+                {cart.products.map((product) => (
+                  <CartItem cartItem={product} key={product.id} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </section>
       </Drawer>
     </>
   );
@@ -58,7 +100,7 @@ export const Login = observer(function Login() {
   const [isOpen, toggle] = useToggle();
   const { loading, login } = useLogin(() => {
     toggle();
-    return new Promise((res) => setTimeout(res, 1000));
+    return new Promise((res) => setTimeout(res, 500)); // todo: listen transition and get exact time
   });
 
   return (
@@ -125,7 +167,7 @@ export const Root = observer(function Root() {
           </Link>
         </nav>
 
-        {Auth.isLoggedIn ? <Cart /> : <Login />}
+        {Auth.isLoggedIn && Auth.user ? <Cart user={Auth.user} /> : <Login />}
       </header>
 
       <div className="flex-grow w-full">

@@ -17,6 +17,6 @@ export const routes = {
     _: "/carts",
     user: (id: number) => "/carts/user/" + id,
     add: "/carts/add",
-    update: (id: number) => "/carts/update/" + id,
+    update: (id: number) => "/carts/" + id,
   },
 } as const;
