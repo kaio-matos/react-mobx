@@ -63,8 +63,8 @@ export const Root = observer(function Root() {
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-auto bg-slate-800 text-white">
-      <header className="flex justify-between w-full p-7 bg-slate-500">
-        <nav className="max-w-7xl mx-auto">
+      <header className="flex justify-between w-full p-7 bg-slate-500 sticky top-0">
+        <nav className="max-w-7xl m-auto">
           <Link to="/" className="data-[status=active]:text-xl">
             Home
           </Link>{" "}
