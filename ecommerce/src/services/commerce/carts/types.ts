@@ -1,4 +1,4 @@
-import { IProductResource } from "./resources/cart";
+import { IProductResource } from "../products/resources/product";
 
 export type tProducts = {
   products: IProductResource[];

@@ -1,7 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { Product } from "../../services/commerce/products/resources/product";
 import { useCart } from "./hooks/useCart";
-import { Auth } from "../../stores/auth";
 import { User } from "../../services/commerce/auth/resources/user";
 
 export const ProductCardPublic = observer(function ProductCardPublic({
@@ -19,7 +18,7 @@ export const ProductCardPublic = observer(function ProductCardPublic({
         <div className="flex p-4 justify-between">
           <h1 className="font-bold text-3xl">{product.title}</h1>
 
-          <span className="text-xl my-auto">{product.formattedPrice}</span>
+          <span className="text-xl my-auto">{product.price.formatted}</span>
         </div>
       </header>
 
@@ -47,7 +46,7 @@ export const ProductCardAuth = observer(function ProductCardAuth({
         <div className="flex p-4 justify-between">
           <h1 className="font-bold text-3xl">{product.title}</h1>
 
-          <span className="text-xl my-auto">{product.formattedPrice}</span>
+          <span className="text-xl my-auto">{product.price.formatted}</span>
         </div>
       </header>
 

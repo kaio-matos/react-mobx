@@ -1,4 +1,5 @@
 import { action, makeAutoObservable } from "mobx";
+import { Amount } from "../../../../models/Amount";
 
 export interface IProductResource {
   id: number;
@@ -21,7 +22,7 @@ export class Product {
   id: number;
   title: string;
   description: string;
-  price: number;
+  price: Amount;
   discountPercentage: number;
   rating: number;
   stock: number;
@@ -37,7 +38,7 @@ export class Product {
     this.id = data.id;
     this.title = data.title;
     this.description = data.description;
-    this.price = data.price;
+    this.price = Amount.create({ value: data.price });
     this.discountPercentage = data.discountPercentage;
     this.rating = data.rating;
     this.stock = data.stock;
@@ -52,7 +53,7 @@ export class Product {
     // simulate price update
     setInterval(
       action(() => {
-        this.price += Math.random();
+        this.price.value += Math.random();
       }),
       Math.random() * 10000
     );
@@ -62,12 +63,5 @@ export class Product {
 
   static create(data: IProductResource) {
     return new Product(data);
-  }
-
-  get formattedPrice() {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: "USD",
-    }).format(this.price);
   }
 }

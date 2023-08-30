@@ -1,5 +1,4 @@
 import { observer } from "mobx-react-lite";
-import { useToggle } from "../../../hooks/toggle";
 import { useStore } from "../../../stores";
 import { useEffect } from "react";
 import { useMountFetch } from "../../../hooks/fetch";
@@ -15,7 +14,7 @@ export const CartItem = observer(function CartItem({
   return (
     <article>
       <h3 className="text-xl font-bold">{cartItem.title}</h3>
-      <p>Price: {cartItem.price}</p>
+      <p>Price: {cartItem.price.formatted}</p>
     </article>
   );
 });
@@ -39,7 +38,7 @@ export const Cart = observer(function Cart({ user }: { user: User }) {
       {Carts.carts.map((cart) => (
         <div key={cart.id}>
           <h1 className="text-bold">Cart: {cart.id}</h1>
-          <p>Total: {cart.total} </p>
+          <p>Total: {cart.total.formatted} </p>
 
           <div className="flex flex-col gap-2 pl-4">
             {cart.products.map((product) => (
