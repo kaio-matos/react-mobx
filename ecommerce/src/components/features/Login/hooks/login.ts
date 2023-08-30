@@ -1,7 +1,7 @@
-import { useFetch } from "../../hooks/fetch";
-import { CommerceService } from "../../services";
-import { User } from "../../services/commerce/auth/resources/user";
-import { useStore } from "../../stores";
+import { useFetch } from "../../../../hooks/fetch";
+import { CommerceService } from "../../../../services";
+import { User } from "../../../../services/commerce/auth/resources/user";
+import { useStore } from "../../../../stores";
 
 export const useLogin = (onLogin?: (user: User) => Promise<void> | void) => {
   const { Auth } = useStore();

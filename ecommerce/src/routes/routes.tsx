@@ -2,7 +2,7 @@ import { RootRoute, Route, Router } from "@tanstack/react-router";
 
 import { Products } from "../pages/products/products.tsx";
 import { Index } from "../pages/index/Index.tsx";
-import { Root } from "../pages/Root.tsx";
+import { Root } from "../pages/Root/Root.tsx";
 
 // Create a root route
 const rootRoute = new RootRoute({
