@@ -1,9 +1,29 @@
 import { useEffect } from "react";
-import { useFetch } from "../../../hooks/fetch";
 import { CommerceService } from "../../../services";
+import { useFetch, useMountFetch } from "../../fetch";
 import { useStore } from "../../../stores";
+import { User } from "../../../services/commerce/auth/resources/user";
 
-export function useCart(userId: number) {
+export function useCarts(user: User) {
+  const { Carts } = useStore();
+
+  const { state } = useMountFetch(() => CommerceService.Carts.get(user.id), {
+    carts: [],
+    limit: 0,
+    skip: 0,
+    total: 0,
+  });
+
+  useEffect(() => {
+    Carts.setCarts(state.carts);
+  }, [state]);
+
+  return {
+    carts: Carts.carts,
+  };
+}
+
+export function useCart(user: User) {
   const { Carts } = useStore();
 
   const {
@@ -13,7 +33,7 @@ export function useCart(userId: number) {
     isLoading: isAddingProductToCart,
   } = useFetch((product_id: number) => {
     const payload = {
-      userId,
+      userId: user.id,
       products: [{ id: product_id, quantity: 1 }],
     };
 

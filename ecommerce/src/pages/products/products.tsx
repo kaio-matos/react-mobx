@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../stores";
-import { useProducts } from "./hooks/useProducts";
 import { ProductCard } from "./product.card";
+import { useProducts } from "../../hooks/features/product/product";
 
 export const Products = observer(function Products() {
   const { products, isLoadingProducts } = useProducts();
