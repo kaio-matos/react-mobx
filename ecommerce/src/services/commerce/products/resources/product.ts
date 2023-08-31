@@ -34,7 +34,7 @@ export class Product {
   isDeleted?: boolean;
   deletedOn?: string;
 
-  private constructor(data: IProductResource) {
+  constructor(data: IProductResource) {
     this.id = data.id;
     this.title = data.title;
     this.description = data.description;

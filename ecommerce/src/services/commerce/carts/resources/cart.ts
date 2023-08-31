@@ -38,7 +38,7 @@ export class Cart {
   totalProducts: number;
   totalQuantity: number;
 
-  private constructor(data: ICartResource) {
+  constructor(data: ICartResource) {
     this.id = data.id;
     this.products = data.products.map((product) => ({
       ...product,

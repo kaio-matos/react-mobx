@@ -21,7 +21,7 @@ export class User {
   image: string;
   token: string;
 
-  private constructor(data: IUserResource) {
+  constructor(data: IUserResource) {
     this.id = data.id;
     this.username = data.username;
     this.email = data.email;
