@@ -58,4 +58,21 @@ export class Cart {
   static create(data: ICartResource) {
     return new Cart(data);
   }
+
+  get toResource(): ICartResource {
+    return {
+      id: this.id,
+      discountedTotal: this.discountedTotal.value,
+      products: this.products.map((p) => ({
+        ...p,
+        discountedPrice: p.discountedPrice.value,
+        price: p.price.value,
+        total: p.total.value,
+      })),
+      total: this.total.value,
+      totalProducts: this.totalProducts,
+      totalQuantity: this.totalQuantity,
+      userId: this.userId,
+    };
+  }
 }
