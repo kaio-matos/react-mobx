@@ -15,6 +15,7 @@ export const routes = {
   },
   carts: {
     _: "/carts",
+    cart: (id: number) => "/carts/" + id,
     user: (id: number) => "/carts/user/" + id,
     add: "/carts/add",
     update: (id: number) => "/carts/" + id,

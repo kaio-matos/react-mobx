@@ -22,6 +22,8 @@ export class Orders extends Http {
 
     this.orders.push(order);
 
+    await new Promise((res) => setTimeout(res, 100));
+
     return Order.create(order);
   }
 

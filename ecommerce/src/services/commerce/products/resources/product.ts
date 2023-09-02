@@ -1,5 +1,6 @@
 import { action, makeAutoObservable } from "mobx";
 import { Amount } from "../../../../models/Amount";
+import { Resource } from "../../types";
 
 export interface IProductResource {
   id: number;
@@ -18,7 +19,7 @@ export interface IProductResource {
   deletedOn?: string;
 }
 
-export class Product {
+export class Product implements Resource {
   id: number;
   title: string;
   description: string;
@@ -63,5 +64,24 @@ export class Product {
 
   static create(data: IProductResource) {
     return new Product(data);
+  }
+
+  get toResource(): IProductResource {
+    return {
+      id: this.id,
+      title: this.title,
+      description: this.description,
+      price: this.price.value,
+      discountPercentage: this.discountPercentage,
+      rating: this.rating,
+      stock: this.stock,
+      brand: this.brand,
+      category: this.category,
+      thumbnail: this.thumbnail,
+      images: this.images,
+
+      isDeleted: this.isDeleted,
+      deletedOn: this.deletedOn,
+    };
   }
 }

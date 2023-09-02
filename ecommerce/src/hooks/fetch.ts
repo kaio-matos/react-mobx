@@ -14,13 +14,12 @@ export function useMountFetch<T>(cb: () => Promise<T>, initial: T) {
     try {
       const data = await cb();
       setState(data);
-      setIsLoading(false);
       return data;
     } catch (err) {
       setError(err);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   useEffect(() => {

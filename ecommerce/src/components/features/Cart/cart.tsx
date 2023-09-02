@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import { User } from "../../../services/commerce/auth/resources/user";
 import { Cart as CartClass } from "../../../services/commerce/carts/resources/cart";
 import { useCarts } from "../../../hooks/features/cart/cart";
+import { Link } from "@tanstack/react-router";
 
 export const CartItem = observer(function CartItem({
   cartItem,
@@ -31,6 +32,14 @@ export const Cart = observer(function Cart({ user }: { user: User }) {
               <CartItem cartItem={product} key={product.id} />
             ))}
           </div>
+
+          <Link
+            to="/orders/create/$id"
+            params={{ id: cart.id.toString() }}
+            className="bg-blue-500 p-4 rounded inline-block mt-4"
+          >
+            Order cart
+          </Link>
         </div>
       ))}
     </section>

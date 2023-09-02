@@ -1,10 +1,23 @@
+import { makeAutoObservable } from "mobx";
 import { Resource } from "../../types";
 
 export const PaymentMethod = {
   cash: "cash",
   card: "card",
+
+  getName(key: string) {
+    return {
+      cash: "Cash",
+      card: "Credit Card",
+    }[key];
+  },
+  getValues(): string[] {
+    return Object.values(this).filter(
+      (value) => typeof value === "string"
+    ) as string[];
+  },
 } as const;
-export type PaymentMethod = typeof PaymentMethod;
+export type PaymentMethod = Omit<typeof PaymentMethod, "getName" | "getValues">;
 
 //
 // Resource

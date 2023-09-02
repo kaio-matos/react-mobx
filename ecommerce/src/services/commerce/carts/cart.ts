@@ -4,7 +4,15 @@ import { Cart, ICartResource } from "./resources/cart";
 import { schemas } from "./schemas";
 
 export class Carts extends Http {
-  async get(id: number) {
+  async get(cart_id: number) {
+    const { data: cart } = await this.http.get<ICartResource>(
+      routes.carts.cart(cart_id)
+    );
+
+    return Cart.create(cart);
+  }
+
+  async getByUserId(user_id: number) {
     const {
       data: { carts, ...data },
     } = await this.http.get<{
@@ -12,7 +20,7 @@ export class Carts extends Http {
       total: number;
       skip: number;
       limit: number;
-    }>(routes.carts.user(id));
+    }>(routes.carts.user(user_id));
 
     return {
       ...data,

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { Product } from "../../services/commerce/products/resources/product";
 import { User } from "../../services/commerce/auth/resources/user";
-import { useCart } from "../../hooks/features/cart/cart";
+import { useAddCart } from "../../hooks/features/cart/cart";
 
 export const ProductCardPublic = observer(function ProductCardPublic({
   product,
@@ -34,7 +34,7 @@ export const ProductCardAuth = observer(function ProductCardAuth({
   user: User;
   product: Product;
 }) {
-  const { addProductToCart } = useCart(user);
+  const { addProductToCart } = useAddCart(user);
 
   return (
     <article className="flex flex-col bg-slate-400 rounded" key={product.id}>

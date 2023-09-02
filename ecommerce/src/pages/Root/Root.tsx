@@ -71,6 +71,9 @@ export const Root = observer(function Root() {
           <Link to="/products" className="data-[status=active]:text-xl">
             Products
           </Link>
+          <Link to="/orders" className="data-[status=active]:text-xl">
+            Orders
+          </Link>
         </nav>
 
         {Auth.isLoggedIn && Auth.user ? (
